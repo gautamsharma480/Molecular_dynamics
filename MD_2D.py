@@ -1,9 +1,6 @@
-#from vpython import *
-import vpython
-from vpython import *
 import numpy as np
 import random
-import matplotlib
+#import matplotlib
 # MD code in 2D
 Natm=100
 Nmax=100
