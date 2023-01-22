@@ -5,3 +5,4 @@ mass of particles = 1.
 Potential cutoff = 3*sigma.
 epsilon = 1.
 PBC => Periodic Boundary conditions.
+This code is devoid of Neighbour list algorithms, so it works faster for bunch of particles like, 25, 50 etc.
