@@ -1,31 +1,35 @@
+#from vpython import *
+import vpython
+from vpython import *
 import numpy as np
 import random
-#import matplotlib
-
-# MD code in 2D using Lennard-Jones Potential
-Natm=25 # No. of Particles 
-Nmax=25 
+import matplotlib
+# MD code in 2D
+Natm=100
+Nmax=100
 Tini = 2.0
 dens = 1.0
 t1 = 0
 
 x = np.zeros(Nmax)
+#print(x)
 y = np.zeros(Nmax)
 vx = np.zeros(Nmax)
 vy = np.zeros(Nmax)
-fx = np.zeros((Nmax,2)) # new and old forces are needed, so two dimensional array needed.
+#print(vy)
+fx = np.zeros((Nmax,2)) # new and old forces are needed, so two dimensions
 fy = np.zeros((Nmax,2)) # same reasoning.
 
-
+#print(fx.size,fy.size, fx.shape)
 L = int(1*np.sqrt(Natm))
-
+#print('length of the box = ', L)
 
 def twelveran():
     s = 0
     for i in range(1,13):
         s += random.random()
         return s/12 - 0.5
-
+#print(twelveran())
 def initial_pos_vel():
     i = -1 # to start indexing from 0.
     for ix in range(0,L):
@@ -47,7 +51,7 @@ def sign(L, dx):
         return -abs(L) # if dx is negative, then dx = dx + L.
 
 def Forces(t, w, PE, PEorW):
-    
+    #invr2=0.0
     r2cut = 9.0
     PE = 0.0
     for i in range(0,Natm):
@@ -77,6 +81,8 @@ def Forces(t, w, PE, PEorW):
                 fx[j][t] = fx[j][t] - fijx  # fx of jth particle
                 fy[j][t] = fy[j][t] - fijy  # fy of jth particle
                 # these fij = - fji are opposite of each other => Negative sign in one of them.
+
+
                 PE = PE  + 4.0*(invr2**3)*((invr2**3) - 1.0)
                 w = w + wij
 
@@ -84,6 +90,7 @@ def Forces(t, w, PE, PEorW):
         return PE
     else:
         return w
+
 
 def Tevolution():
     f = open('KE.dat', 'w')
@@ -101,17 +108,18 @@ def Tevolution():
     w = 0.0
     initial_pos_vel()
     for i in range(0,Natm):
-        KE = KE + (vx[i]*vx[i] + vy[i]*vy[i])*0.5 # KE calculation.
+        KE = KE + (vx[i]*vx[i] + vy[i]*vy[i])*0.5 # KE calculation at the start up. These random velocities should
+        # take up values following Maxwellian distribution.
 
-    PE = Forces(t1, w, PE, 1) # forces are computed here for the first time.
+    PE = Forces(t1, w, PE, 1) # forces are computed here for the first time when particles are placed on a 2D-grid.
     time = 1
-    while time <= 5000:
+    while time <= 1000:
         print(time)
         #print("hello")
         #t1 += 1
         for i in range(0,Natm):
-            PE  = Forces(t1,w, PE, 1)
-            x[i] = x[i] + h*(vx[i] + h_by2 * fx[i][t1])
+            PE  = Forces(t1,w, PE, 1) # Calculate the forces here.
+            x[i] = x[i] + h*(vx[i] + h_by2 * fx[i][t1]) # Velocities will be updated here in next iteration.
             if x[i] <= 0.0:  # PBC for x
                 x[i] = x[i] + L
             if x[i] > L:
@@ -122,9 +130,11 @@ def Tevolution():
                 y[i] = y[i] + L
             if y[i] > L:
                 y[i] = y[i] - L
+        # Once this loop finishes, it generates a microstate and a set of forces on all particles of that microstate.
         t2 = 1
         PE = 0
-        PE = Forces(t2, w , PE, 1) # Calculating new forces, it is mandatory before computing velocities.
+        PE = Forces(t2, w , PE, 1) # Calculating new forces for previous microstate,
+        # it is mandatory before computing velocities.
         KE = 0
         w = 0
         for i in range(0,Natm):
