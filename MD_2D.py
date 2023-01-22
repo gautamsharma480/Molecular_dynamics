@@ -105,7 +105,7 @@ def Tevolution():
 
     PE = Forces(t1, w, PE, 1) # forces are computed here for the first time.
     time = 1
-    while time <= 1000:
+    while time <= 5000:
         print(time)
         #print("hello")
         #t1 += 1
