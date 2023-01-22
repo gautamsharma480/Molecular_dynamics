@@ -1,6 +1,6 @@
 import numpy as np
 import random
-import matplotlib
+#import matplotlib
 
 # MD code in 2D using Lennard-Jones Potential
 Natm=25 # No. of Particles 
